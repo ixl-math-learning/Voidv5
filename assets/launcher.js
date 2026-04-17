@@ -1,5 +1,6 @@
-// Launcher — wires up baremux + epoxy transport, loads scramjet,
-// registers the SW, and hooks up the URL bar.
+// Launcher — sets up baremux + epoxy transport, loads scramjet,
+// registers the SW, and auto-navigates the iframe to HOMEPAGE so the
+// page behaves as a direct mirror of the Void Network homepage.
 (async function () {
   const BASE = location.pathname.replace(/\/[^/]*$/, '');
   const WISP = "wss://vng.lol/~r/9/";
@@ -8,14 +9,10 @@
   const $ = (sel) => document.querySelector(sel);
   const splash = $('#splash');
   const err    = $('#err');
-  const bar    = $('#bar');
   const frame  = $('#frame');
-  const urlIn  = $('#url');
-  const goBtn  = $('#go');
-  const engSel = $('#engine');
-  const homeBtn = $('#home');
 
   function showErr(msg) {
+    if (!err) return;
     err.textContent = msg;
     err.style.display = 'block';
     clearTimeout(showErr._t);
@@ -27,7 +24,7 @@
     if (!s) return null;
     if (/^https?:\/\//i.test(s)) return s;
     if (/^[a-z0-9\-]+(\.[a-z]{2,})+(\/.*)?$/i.test(s)) return 'https://' + s;
-    return 'https://www.google.com/search?q=' + encodeURIComponent(s);
+    return null;
   }
 
   let scramjetController = null;
@@ -84,11 +81,6 @@
     swReady = true;
   }
 
-  function encodeUV(u) {
-    const enc = (window.Ultraviolet && window.Ultraviolet.codec && window.Ultraviolet.codec.xor)
-      ? window.Ultraviolet.codec.xor.encode : (x) => x;
-    return BASE + '/uv/' + enc(u);
-  }
   function encodeScram(u) {
     if (scramjetController && typeof scramjetController.encodeUrl === 'function') {
       return scramjetController.encodeUrl(u);
@@ -97,31 +89,29 @@
   }
 
   function go(target) {
-    const u = target || normalize(urlIn.value);
-    if (!u) return;
+    if (!target) return;
     if (!swReady) { showErr('Proxy not ready yet'); return; }
-    const proxied = engSel.value === 'uv' ? encodeUV(u) : encodeScram(u);
-    frame.src = proxied;
+    frame.src = encodeScram(target);
   }
-
-  goBtn.addEventListener('click', () => go());
-  urlIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
-  homeBtn.addEventListener('click', () => go(HOMEPAGE));
 
   try {
     await init();
-    splash.classList.add('done');
-    setTimeout(() => { splash.style.display = 'none'; }, 400);
-    urlIn.focus();
+    if (splash) {
+      splash.classList.add('done');
+      setTimeout(() => { splash.style.display = 'none'; }, 400);
+    }
     const h = (location.hash || '').replace(/^#/, '');
     if (h && h !== '/' && h !== '/home') {
-      const target = h.charAt(0) === '/' ? 'https://' + h.slice(1) : h;
-      urlIn.value = target;
-      go(target);
+      const override = h.charAt(0) === '/' ? 'https://vng.lol' + h : (normalize(h) || HOMEPAGE);
+      go(override);
+    } else {
+      go(HOMEPAGE);
     }
   } catch (e) {
-    splash.innerHTML = '<div style="text-align:center;color:#ffb4b4;padding:24px">' +
-      '<p style="font-size:16px;margin:0 0 8px">Startup failed</p>' +
-      '<p style="font-size:13px;opacity:.75;margin:0">' + (e && e.message || String(e)) + '</p></div>';
+    if (splash) {
+      splash.innerHTML = '<div style="text-align:center;color:#ffb4b4;padding:24px">' +
+        '<p style="font-size:16px;margin:0 0 8px">Startup failed</p>' +
+        '<p style="font-size:13px;opacity:.75;margin:0">' + (e && e.message || String(e)) + '</p></div>';
+    }
   }
 })();

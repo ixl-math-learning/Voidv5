@@ -27,8 +27,12 @@ A self-contained proxy launcher served from GitHub via jsdelivr.
 5. The service worker intercepts any request under `<scope>/uv/*`,
    `<scope>/scrammy/*`, or `<scope>/bare/*` and forwards it through BareMux
    to the wisp backend.
-6. The URL bar encodes a user-typed URL and sets the iframe `src` to the
-   proxied variant. All navigation thereafter stays on the CDN origin.
+6. On init, the launcher auto-navigates the full-viewport iframe to
+   `HOMEPAGE` (encoded through Scramjet), so opening `logo.svg` is
+   visually indistinguishable from opening the live site. All navigation
+   thereafter stays on the CDN origin.
+7. A URL hash like `logo.svg#/view.html` lands on `https://vng.lol/view.html`
+   instead of the default homepage; `logo.svg#https://example.com` works too.
 
 ## Layout
 

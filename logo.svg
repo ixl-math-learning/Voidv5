@@ -44,15 +44,6 @@
         <link rel="stylesheet" href="./assets/launcher.css" />
       </head>
       <body>
-        <div id="bar">
-          <select id="engine" title="Engine">
-            <option value="scramjet">Scramjet</option>
-            <option value="uv">Ultraviolet</option>
-          </select>
-          <input id="url" placeholder="Type a URL or search" autocomplete="off" spellcheck="false" />
-          <button id="go">Go</button>
-          <button id="home" title="Open homepage">Home</button>
-        </div>
         <div id="err" role="alert"></div>
         <iframe id="frame" name="classroom" title="Classroom"
           allow="fullscreen; clipboard-read; clipboard-write; autoplay; encrypted-media; gamepad; accelerometer; gyroscope; microphone; camera; midi; picture-in-picture"
