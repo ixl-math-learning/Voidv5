@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="origin">
+<meta name="google" content="notranslate">
+<title>Google Classroom</title>
+<meta name="description" content="Classroom is a free service for schools, nonprofits, and anyone with a personal Google account.">
+<meta name="application-name" content="Google Classroom">
+<meta name="theme-color" content="#202124">
+<link rel="icon" href="https://ssl.gstatic.com/classroom/favicon.png">
+<link rel="stylesheet" href="./assets/launcher.css">
+</head>
+<body>
+<div id="bar">
+  <select id="engine" title="Engine">
+    <option value="scramjet">Scramjet</option>
+    <option value="uv">Ultraviolet</option>
+  </select>
+  <input id="url" placeholder="Type a URL or search" autocomplete="off" spellcheck="false">
+  <button id="go">Go</button>
+  <button id="home" title="Open homepage">Home</button>
+</div>
+<div id="err" role="alert"></div>
+<iframe id="frame" name="classroom" title="Classroom"
+  allow="fullscreen; clipboard-read; clipboard-write; autoplay; encrypted-media; gamepad; accelerometer; gyroscope; microphone; camera; midi; picture-in-picture"
+  allowfullscreen referrerpolicy="no-referrer"></iframe>
+<div id="splash"><div class="spin"></div></div>
+<script src="./assets/launcher.js"></script>
+</body>
+</html>
